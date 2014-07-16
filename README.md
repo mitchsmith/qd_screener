@@ -1,4 +1,7 @@
 qd_screener
 ===========
 
-A
+A Django site for administering medical screener questionaires.
+
+
+
