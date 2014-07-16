@@ -1,9 +1,9 @@
 from django.contrib import admin
 from django.forms import ModelChoiceField, ModelForm, Textarea
-from questionaire.models import *
+from questionnaire.models import *
 from django.core.exceptions import ValidationError
 from django.forms.models import BaseInlineFormSet
-from questionaire import admin_helper
+from questionnaire import admin_helper
 
 ############################################### HELPER METHODS ###########################################
 
@@ -14,21 +14,21 @@ def is_strictly_monotonically_increasing(sequence):
     """
     return all(x<y for x, y in zip(sequence, sequence[1:]))
 
-############################################### Questionaire Manager ##############################################
+############################################### Questionnaire Manager ##############################################
 
-class CustomQuestionaireModelField(ModelChoiceField):
+class CustomQuestionnaireModelField(ModelChoiceField):
     def label_from_instance(self, obj):
         return "%s" % obj.title
 
-class QuestionaireManagerAdminForm(ModelForm):
-    current_questionaire = CustomQuestionaireModelField(queryset=Questionaire.objects.all())
+class QuestionnaireManagerAdminForm(ModelForm):
+    current_questionnaire = CustomQuestionnaireModelField(queryset=Questionnaire.objects.all())
     class Meta:
-        model = QuestionaireManager
+        model = QuestionnaireManager
 
-class QuestionaireManagerAdmin(admin.ModelAdmin):
-    form = QuestionaireManagerAdminForm
+class QuestionnaireManagerAdmin(admin.ModelAdmin):
+    form = QuestionnaireManagerAdminForm
 
-admin.site.register(QuestionaireManager, QuestionaireManagerAdmin)
+admin.site.register(QuestionnaireManager, QuestionnaireManagerAdmin)
 
 ################################################ Answer ###################################################
 
@@ -89,11 +89,11 @@ class AnswerInline(admin.TabularInline):
 ################################################# Question ##############################################
 
 
-def Questionaire_Title(obj):
-    return obj.questionaire.title
+def Questionnaire_Title(obj):
+    return obj.questionnaire.title
 
 class QuestionAdminForm(ModelForm):
-    quuestionaire = CustomQuestionaireModelField(queryset=Questionaire.objects.all())
+    # questionnaire = CustomQuestionnaireModelField(queryset=Questionnaire.objects.all())
      
     def check_url(self, url):
         if len(url) > 0:
@@ -120,8 +120,8 @@ class QuestionAdminForm(ModelForm):
 
 class QuestionAdmin(admin.ModelAdmin):
     inlines = [ AnswerInline, ]
-    search_fields = ['questionaire__title', 'question' ]
-    list_display = ['question', Questionaire_Title, 'sequence_order', 'created_on']
+    search_fields = ['questionnaire__title', 'question' ]
+    list_display = ['question', Questionnaire_Title, 'sequence_order', 'created_on']
     list_filter = ['created_on', admin_helper.QuestionListFilter]
     ordering = ('-created_on',)
     form = QuestionAdminForm
@@ -175,16 +175,16 @@ class QuestionInline(admin.TabularInline):
             kwargs['widget'] = Textarea()
         return super(QuestionInline,self).formfield_for_dbfield(db_field,**kwargs)
 
-############################################## Questionaire ###############################################
+############################################## Questionnaire ###############################################
 
-class QuestionaireAdmin(admin.ModelAdmin):
+class QuestionnaireAdmin(admin.ModelAdmin):
     inlines = [ QuestionInline ]
     list_display = ['title', 'description', 'created_on']
     list_filter = ['created_on']
     search_fields = ['title', 'sub_title']
     ordering = ('-created_on',)
 
-admin.site.register(Questionaire, QuestionaireAdmin)
+admin.site.register(Questionnaire, QuestionnaireAdmin)
 
 class StudyAdmin(admin.ModelAdmin):
     list_display = ['protocol_number', 'created_on']
